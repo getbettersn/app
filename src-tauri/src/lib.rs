@@ -4,6 +4,7 @@ use tauri::{
 };
 
 use tauri_plugin_positioner::{WindowExt, Position};
+use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -18,15 +19,15 @@ pub fn run() {
                 .menu(&menu)
                 .build(app)?;
             
-            // let window = app.get_webview_window("main").unwrap();
+            let window = app.get_webview_window("main").unwrap();
 
-            // #[cfg(target_os = "macos")]
-            // apply_vibrancy(
-            //     &window, 
-            //     NSVisualEffectMaterial::Menu, 
-            //     Some(NSVisualEffectState::Active), 
-            //     Some(6.0)
-            // ).expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
+            #[cfg(target_os = "macos")]
+            apply_vibrancy(
+                &window, 
+                NSVisualEffectMaterial::Menu, 
+                Some(NSVisualEffectState::Active), 
+                Some(6.0)
+            ).expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 
             Ok(())
         })
