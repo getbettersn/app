@@ -15,6 +15,10 @@ pub fn run() {
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| {
 
+            // remove from Dock
+            #[cfg(target_os = "macos")]
+            app.set_activation_policy(tauri::ActivationPolicy::Accessory);
+
             app.listen("quitProgram", |event| {
                 std::process::exit(0)
             });
