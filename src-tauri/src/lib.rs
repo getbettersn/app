@@ -11,12 +11,9 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| {
-            let quit_i = MenuItem::with_id(app, "quit", "Quit", true, None::<&str>)?;
-            let menu = Menu::with_items(app, &[&quit_i])?;
 
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
-                .menu(&menu)
                 .build(app)?;
             
             let window = app.get_webview_window("main").unwrap();
@@ -46,12 +43,11 @@ pub fn run() {
             TrayIconEvent::Click {
                 position: _,
                 button: MouseButton::Left,
-                // button_state: MouseButtonState::Up,
+                button_state: MouseButtonState::Up,
                 ..
             } => {
                 let app = tray.app_handle();
                 if let Some(window) = app.get_webview_window("main") {
-                    // TODO: set to tray center. --> set tray positoin
                     let _ = window.move_window(Position::TrayCenter);
                     if window.is_visible().unwrap() {
                         window.hide().unwrap();
