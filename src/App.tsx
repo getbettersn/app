@@ -80,12 +80,13 @@ function App() {
   return (
     // this should be displayed inside the system tray menu
     <main className="container">
-      <h1>Hello World!</h1>
-      <p>{message}</p>
-      {files.map((file) => (
-        <p> {file.name}</p>
-      ))}
-      <button onClick={emitQuit}>Exit</button>
+      <div className="general">
+        <button>Browse notes</button>
+        <hr></hr>
+      </div>
+      <div className="danger">
+        <button onClick={emitQuit}>Quit</button>
+      </div>
     </main>
   );
 }
