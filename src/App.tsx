@@ -1,4 +1,3 @@
-import "./App.css";
 import { listen, emit } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";

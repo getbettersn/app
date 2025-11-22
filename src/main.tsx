@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import "./App.css";
 import App from "./App";
 import { BrowserRouter, Routes, Route } from "react-router";
 import ListNotes from "./pages/ListNotes";
