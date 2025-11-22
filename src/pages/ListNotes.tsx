@@ -1,3 +1,17 @@
+import { useNavigate } from "react-router";
+
 export default function ListNotes() {
-  return <main>{/* List notes here */}</main>;
+  const navigate = useNavigate();
+  return (
+    <main>
+      <button>Create a new note</button>
+      <button
+        onClick={() => {
+          navigate(-1);
+        }}
+      >
+        Go back
+      </button>
+    </main>
+  );
 }

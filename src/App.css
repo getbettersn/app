@@ -50,7 +50,8 @@ hr {
     width: 95%;
 }
 
-button {
+button,
+a {
     background-color: transparent;
     width: 100%;
     text-align: start;

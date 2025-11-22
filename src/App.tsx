@@ -1,6 +1,7 @@
 import "./App.css";
 import { listen, emit } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
+import { NavLink } from "react-router";
 
 import {
   BaseDirectory,
@@ -81,7 +82,10 @@ function App() {
     // this should be displayed inside the system tray menu
     <main className="container">
       <div className="general">
-        <button>Browse notes</button>
+        <NavLink to="list-notes">
+          <button>Browse notes</button>
+        </NavLink>
+
         <hr></hr>
       </div>
       <div className="danger">
