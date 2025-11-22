@@ -79,16 +79,26 @@ function App() {
 
   return (
     // this should be displayed inside the system tray menu
-    <main className="container">
-      <div className="general">
-        <NavLink to="list-notes">
-          <button>Browse notes</button>
-        </NavLink>
-
-        <hr></hr>
+    <main className="pt-2 px-2 pb-1 h-screen text-sm bg-transparent flex flex-col">
+      <div className="flex flex-col general h-full">
+        <div className="flex flex-col pb-1 w-full border-b border-neutral-700">
+          <NavLink
+            className="cursor-default w-full p-1 px-2 rounded-md text-white hover:bg-blue-500"
+            to="list-notes"
+          >
+            Browse notes
+          </NavLink>
+        </div>
       </div>
       <div className="danger">
-        <button onClick={emitQuit}>Quit</button>
+        <div className="flex flex-col py-1 w-full">
+          <button
+            className="text-start w-full p-1 px-2 rounded-md text-white hover:bg-blue-500"
+            onClick={emitQuit}
+          >
+            Quit
+          </button>
+        </div>
       </div>
     </main>
   );
