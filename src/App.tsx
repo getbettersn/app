@@ -1,4 +1,4 @@
-import { listen, emit } from "@tauri-apps/api/event";
+import { emit } from "@tauri-apps/api/event";
 import { useEffect, useState } from "react";
 import { NavLink } from "react-router";
 
@@ -6,7 +6,6 @@ import {
   BaseDirectory,
   exists,
   mkdir,
-  writeFile,
   readDir,
   DirEntry,
 } from "@tauri-apps/plugin-fs";
@@ -78,16 +77,22 @@ function App() {
   }
 
   return (
-    // this should be displayed inside the system tray menu
-    <main className="pt-2 px-2 pb-1 h-screen text-sm bg-transparent flex flex-col">
+    <main className="select-none pt-2 px-2 pb-1 h-screen text-sm bg-transparent flex flex-col">
       <div className="flex flex-col general h-full">
-        <div className="flex flex-col pb-1 w-full border-b border-neutral-700">
+        <div className="flex flex-col pb-1 w-full">
           <NavLink
             className="cursor-default w-full p-1 px-2 rounded-md text-white hover:bg-blue-500"
-            to="list-notes"
+            to="notes"
           >
             Browse notes
           </NavLink>
+        </div>
+        <div className="m-2 flex flex-col h-full bg-neutral-800 border border-neutral-700 p-4 items-center justify-center rounded">
+          <div className="flex flex-col items-center gap-2">
+            <h1 className="rounded text-4xl font-serif text-white">sn</h1>
+            <div className="text-xs text-neutral-300 font-light flex flex-col text-center">
+            </div>
+          </div>
         </div>
       </div>
       <div className="danger">
