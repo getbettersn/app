@@ -32,7 +32,6 @@ export default function ListNotes() {
       });
     } catch (error: any) {
       console.error(error);
-      setMessage(error);
     }
   }
 
@@ -43,14 +42,12 @@ export default function ListNotes() {
       });
 
       if (doesItExist) {
-        setMessage("The notes folder exists. No need to create one.");
+        // TODO: Find a way to display errors.
       } else {
-        setMessage("The notes folder does not exist...");
         createNotesFolder();
       }
     } catch (error: any) {
       console.error(error);
-      setMessage(error);
     }
   }
 
@@ -61,7 +58,6 @@ export default function ListNotes() {
         baseDir: BaseDirectory.AppLocalData,
       });
       setFiles(files);
-      console.log(files);
     } catch (error: any) {
       console.error(error);
     }
@@ -73,7 +69,6 @@ export default function ListNotes() {
   }, []);
 
   // TODO: Añadir una desta de carga para que no se vea feo.
-  //
   const navigate = useNavigate();
   return (
     <main className="pt2 px-2 pb-1 h-screen text-sm bg-transparent flex flex-col">
@@ -84,14 +79,16 @@ export default function ListNotes() {
             navigate(-1);
           }}
         >
-          ⬅️ Go back
+          Go back
         </button>
         <div className="grow flex flex-col gap-1 pt-2">
           {files.length > 0 ? (
             files.map((file) => (
-              <button className="text-start px-2 text-neutral-400 hover:bg-neutral-500 hover:text-neutral-900 rounded">
-                {file.name}
-              </button>
+              <NavLink
+                className="text-start px-2 text-neutral-400 hover:bg-neutral-500 hover:text-neutral-900 rounded"
+               to={`/${file.name}`}>
+                  {file.name}
+              </NavLink>
             ))
           ) : (
             <div className="grow border border-neutral-700 border-dashed flex flex-col items-center justify-center">
