@@ -1,6 +1,14 @@
 import { useNavigate } from "react-router";
 import { useEffect, useState } from "react";
 import ListNotes from "./ListNotes";
+import {
+  createNotesFolder,
+  saveNote,
+  createNote,
+  doesFolderExists,
+  requestNotes,
+  type Folder,
+} from "../lib/note";
 
 import {
   BaseDirectory,
@@ -11,73 +19,27 @@ import {
   DirEntry,
 } from "@tauri-apps/plugin-fs";
 
-interface Folder {
-  name: string;
-  dir: string;
-}
-
 export default function Notes() {
-
   const navigate = useNavigate();
 
-  const [files, setFiles] = useState<DirEntry[]>([]);
+  const [notes, setNotes] = useState<DirEntry[]>([]);
 
-  const notesFolder : Folder = {
-    name: "notes",
-    dir: "notes"
-  }
-
-  // When there is no 'notes' folder created
-  async function createNotesFolder() {
-    try {
-      await mkdir(notesFolder.name, {
-        baseDir: BaseDirectory.AppLocalData,
-      });
-    } catch (error: any) {
-      console.error(error);
-    }
-  }
-
-  // Create a new note function
   function handleCreateNote() {
-    alert("Hello")
-  }
-
-  // Check if there is content inside the 'notes' folder.
-  async function checkNotesFolderExists() {
-    try {
-      let doesItExist = await exists(notesFolder.name, {
-        baseDir: BaseDirectory.AppLocalData,
-      });
-
-      if (doesItExist) {
-        // TODO: Find a way to display errors.
-      } else {
-        createNotesFolder();
-      }
-    } catch (error: any) {
-      console.error(error);
-    }
-  }
-
-  // Read the files from the 'notes' folder
-  async function readFiles() {
-    try {
-      const files = await readDir(notesFolder.name, {
-        baseDir: BaseDirectory.AppLocalData,
-      });
-      setFiles(files);
-    } catch (error: any) {
-      // TODO: Pass errors to error component.
-      console.error(error);
-    }
+    // here we need to go and create a new note
   }
 
   // Load just only one time. That's why [] is empty.
   useEffect(() => {
-    checkNotesFolderExists();
-    readFiles();
-  }, []);
+    doesFolderExists().then((response) => {
+      response
+        ? requestNotes()
+            .then((notes) => {
+              setNotes(notes);
+            })
+            .catch((err) => console.error(err))
+        : createNotesFolder();
+    });
+  });
 
   return (
     <main className="pt2 pb-1 h-screen text-sm bg-transparent flex flex-col">
@@ -90,16 +52,21 @@ export default function Notes() {
         >
           Go back
         </button>
-        <button
-          className="mx-2 mb-2 text-sm text-start p-1 px-2 rounded-md text-white hover:bg-blue-500"
-          onClick={() => {
-            handleCreateNote()
-          }}
-        >
-         Create new note +
-        </button>
+        {notes.length > 0 ? (
+          <button
+            className="mx-2 mb-2 text-sm text-start p-1 px-2 rounded-md text-white hover:bg-blue-500"
+            onClick={() => {
+              createNote("Oracle es lo peo");
+            }}
+          >
+            Create new note
+          </button>
+        ) : (
+          ""
+        )}
+
         <div className="border-t border-neutral-700 mx-2 grow flex flex-col">
-          <ListNotes notes={files} />
+          <ListNotes notes={notes} />
         </div>
       </div>
     </main>

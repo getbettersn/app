@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router";
-import { BaseDirectory, readFile, writeFile } from "@tauri-apps/plugin-fs";
 import { useEffect, useState } from "react";
+import { createOrSaveNote, requestContentsFromNote } from "../lib/note";
 
 export default function Note() {
   let { noteid } = useParams();
@@ -8,36 +8,17 @@ export default function Note() {
 
   // To convert from IntArry to string.
   const decoder = new TextDecoder();
-  const encoder = new TextEncoder();
 
   const [textAreaContent, setTextAreaContent] = useState<string>();
 
-  // Read the content within the file.
-  async function readContentsFromFile() {
-    try {
-      let file_contents = await readFile("notes/" + noteid, {
-        baseDir: BaseDirectory.AppLocalData,
-      });
-      setTextAreaContent(decoder.decode(file_contents));
-    } catch (error: any) {
-      console.error(error);
-    }
-  }
-
   // Only one time. That's why [] is empty.
   useEffect(() => {
-    readContentsFromFile();
+    requestContentsFromNote(noteid).then(
+      result => setTextAreaContent(decoder.decode(result))
+    ).catch(
+      err => console.error(err)
+    );
   }, []);
-
-  async function handleSave() {
-    try {
-      await writeFile("notes/" + noteid, encoder.encode(textAreaContent), {
-        baseDir: BaseDirectory.AppLocalData
-      })
-    } catch (err: any) {
-      console.error(err)
-    }
-  }
 
   return (
     <div className="h-screen flex flex-col">
@@ -51,8 +32,8 @@ export default function Note() {
       </button>
       <div className="flex flex-col h-full bg-neutral-100 mx-3 mb-3 rounded-xs">
         <header className="rounded items-center space-between font-mono p-2 flex bg-neutral-200">
-          <p className="grow text-xs italic text-neutral-500">{ noteid }</p>
-          <button onClick={() => handleSave()} className="text-xs">Save</button>
+          <p className="grow text-xs italic text-neutral-500">{ noteid?.split('.')[0] }</p>
+          <button onClick={() => createOrSaveNote(noteid, textAreaContent)} className="text-xs">Save</button>
         </header>
 
         <div className="grow p-2 text-xs">
