@@ -9,6 +9,7 @@ import {
   readDir,
   DirEntry,
 } from "@tauri-apps/plugin-fs";
+import { Button } from "./components/ui/button";
 
 interface Folder {
   name: string;
@@ -77,7 +78,7 @@ function App() {
   }
 
   return (
-    <main className="select-none pt-2 px-2 pb-1 h-screen text-sm bg-transparent flex flex-col">
+    <main className="select-none pt-2 px-2 pb-1 h-screen text-sm flex flex-col">
       <div className="flex flex-col general h-full">
         <div className="flex flex-col pb-1 w-full">
           <NavLink
@@ -90,19 +91,16 @@ function App() {
         <div className="m-2 flex flex-col h-full bg-neutral-800 border border-neutral-700 p-4 items-center justify-center rounded">
           <div className="flex flex-col items-center gap-2">
             <h1 className="rounded text-4xl font-serif text-white">sn</h1>
-            <div className="text-xs text-neutral-300 font-light flex flex-col text-center">
+            <div className="text-xs dark:text-neutral-300 font-light flex flex-col text-center">
             </div>
           </div>
         </div>
       </div>
       <div className="danger">
-        <div className="flex flex-col py-1 w-full">
-          <button
-            className="text-start w-full p-1 px-2 rounded-md text-white hover:bg-blue-500"
-            onClick={emitQuit}
-          >
+        <div className="flex flex-col w-full pb-1">
+          <Button onClick={emitQuit} variant="ghost" className="text-white text-start mx-1 px-2 hover:bg-lime-300/75 backdrop-blur-3xl">
             Quit
-          </button>
+          </Button>
         </div>
       </div>
     </main>

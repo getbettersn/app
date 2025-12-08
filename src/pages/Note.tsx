@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router";
 import { useEffect, useState } from "react";
-import { createOrSaveNote, requestContentsFromNote } from "../lib/note";
+import { createNote, requestContentsFromNote } from "../lib/note";
 
 export default function Note() {
   let { noteid } = useParams();
