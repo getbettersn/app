@@ -13,17 +13,17 @@
     "windows": [
       {
         "fullscreen": false,
-        "resizable": false,
-        "title": "menubar",
-        "width": 280,
-        "height": 400,
-        "visible": false,
-        "hiddenTitle": true,
+        "resizable": true,
+        "title": "sn",
+        "width": 800,
+        "height": 800,
+        "visible": true,
+        "hiddenTitle": false,
         "titleBarStyle": "Overlay",
-        "alwaysOnTop": true,
-        "closable": false,
-        "minimizable": false,
-        "decorations": false,
+        "alwaysOnTop": false,
+        "closable": true,
+        "minimizable": true,
+        "decorations": true,
         "focus": false,
         "transparent": true
       }

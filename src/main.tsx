@@ -3,18 +3,23 @@ import ReactDOM from "react-dom/client";
 import "./App.css";
 import App from "./App";
 import { BrowserRouter, Routes, Route } from "react-router";
-import Notes from "./pages/Notes";
-import Note from "./pages/Note";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarProvider,
+  SidebarTrigger,
+} from "./components/ui/sidebar";
+import { AppSidebar } from "./components/app-sidebar";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route index path="/" element={<App />} />
-        <Route path="notes" element={<Notes />} />
-        { /* Route for the notes itself */}
-        <Route path="/:noteid" element={<Note />} />
-      </Routes>
+      <SidebarProvider className="bg-transparent">
+        <AppSidebar />
+        <Routes>
+          <Route index path="/" element={<App />} />
+        </Routes>
+      </SidebarProvider>
     </BrowserRouter>
   </React.StrictMode>,
 );
