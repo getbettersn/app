@@ -1,4 +1,5 @@
 use tauri::{
+    Builder,
     tray::TrayIconBuilder,
     tray::{MouseButton, MouseButtonState, TrayIconEvent},
     Manager,
@@ -6,10 +7,16 @@ use tauri::{
 
 use comrak::{markdown_to_html, Options};
 use std::fs;
+use std::sync::Mutex;
 
 use tauri::{AppHandle, Emitter, Listener};
 use tauri_plugin_positioner::{Position, WindowExt};
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
+
+#[derive(Default)]
+struct AppState {
+    note: String,
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -17,7 +24,12 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| {
-            app.listen("quitProgram", |_event| std::process::exit(0));
+
+            // Manage state
+            app.manage(Mutex::new(AppState::default()));
+
+            // TODO: Implement later
+            // app.listen("quitProgram", |_event| std::process::exit(0));
 
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())

@@ -23,13 +23,20 @@ const encoder = new TextEncoder();
  * @param note_name The name of the note.
  * @param content The content to write inside the note.
  */
-export async function saveNote(note_name: string | undefined = "Untitled", content : string | undefined) {
+export async function saveNote(
+  note_name: string | undefined = "Untitled",
+  content: string | undefined,
+) {
   try {
-    await writeFile(NOTES_FOLDER.name + "/" + note_name, encoder.encode(content), {
-      baseDir: BaseDirectory.AppLocalData
-    })
+    await writeFile(
+      NOTES_FOLDER.name + "/" + note_name,
+      encoder.encode(content),
+      {
+        baseDir: BaseDirectory.AppLocalData,
+      },
+    );
   } catch (err: any) {
-    console.error(err)
+    console.error(err);
   }
 }
 
@@ -39,16 +46,16 @@ export async function saveNote(note_name: string | undefined = "Untitled", conte
  */
 export async function createNote(name: string) {
   // Add file extension
-  name = name.trim() + ".md"
+  name = name.trim() + ".md";
 
   // comprobar que el archivo no exista
   if (!doesNoteExists(name)) {
     try {
       await writeFile(NOTES_FOLDER.name + "/" + name, encoder.encode(""), {
-        baseDir: BaseDirectory.AppLocalData
-      })
+        baseDir: BaseDirectory.AppLocalData,
+      });
     } catch (err: any) {
-      console.error(err)
+      console.error(err);
     }
   }
 }
@@ -56,20 +63,19 @@ export async function createNote(name: string) {
 function doesNoteExists(noteName: string): boolean {
   let doesItExist: boolean = false;
 
-  requestNotes().then(
-    notes => {
-      if(notes.length > 0) {
-        notes.map((note) => {
-          if(note.name == noteName) {
-            doesItExist = true
-          } else {
-            doesItExist = false
-          }
-        })
-      } else {
-        doesItExist = false
-      }
-    })
+  requestNotes().then((notes) => {
+    if (notes.length > 0) {
+      notes.map((note) => {
+        if (note.name == noteName) {
+          doesItExist = true;
+        } else {
+          doesItExist = false;
+        }
+      });
+    } else {
+      doesItExist = false;
+    }
+  });
 
   return doesItExist;
 }
@@ -102,13 +108,15 @@ export async function createNotesFolder(folder: Folder = NOTES_FOLDER) {
 /**
  * Requests the content from inside the note.
  * @param noteName
- * @returns
+ * @returns string
  */
-export async function requestContentsFromNote(noteName : string | undefined) {
+export async function requestContentsFromNote(noteName: string | undefined) {
   try {
-    return await readFile(NOTES_FOLDER.name + "/" + noteName, {
+    const decoder = new TextDecoder();
+    let contents = await readFile(NOTES_FOLDER.name + "/" + noteName, {
       baseDir: BaseDirectory.AppLocalData,
     });
+    return decoder.decode(contents);
   } catch (error: any) {
     console.error(error);
   }
@@ -119,7 +127,9 @@ export async function requestContentsFromNote(noteName : string | undefined) {
  * @param folder
  * @returns Promise<Boolean, Error>
  */
-export async function doesFolderExists(folder: Folder = NOTES_FOLDER): Promise<boolean> {
+export async function doesFolderExists(
+  folder: Folder = NOTES_FOLDER,
+): Promise<boolean> {
   try {
     return await exists(folder.name, {
       baseDir: BaseDirectory.AppLocalData,
@@ -135,12 +145,14 @@ export async function doesFolderExists(folder: Folder = NOTES_FOLDER): Promise<b
  * @param folder Where to seach for the notes. Default dir: `notes`.
  * @returns Promise<DirEnty[] | undefined>
  */
-export async function requestNotes(folder: Folder = NOTES_FOLDER): Promise<DirEntry[]> {
+export async function requestNotes(
+  folder: Folder = NOTES_FOLDER,
+): Promise<DirEntry[]> {
   try {
     return await readDir(folder.name, {
       baseDir: BaseDirectory.AppLocalData,
     });
   } catch (error: any) {
-    return error
+    return error;
   }
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./App.css";
-import App from "./App";
+import Note from "./Note";
 import { BrowserRouter, Routes, Route } from "react-router";
 import {
   Sidebar,
@@ -17,7 +17,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <SidebarProvider className="bg-transparent">
         <AppSidebar />
         <Routes>
-          <Route index path="/" element={<App />} />
+          <Route index path="/" element={<Note />} />
         </Routes>
       </SidebarProvider>
     </BrowserRouter>
