@@ -10,15 +10,19 @@ import {
   SidebarTrigger,
 } from "./components/ui/sidebar";
 import { AppSidebar } from "./components/app-sidebar";
+import Titlebar from "./components/titlebar";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <SidebarProvider className="bg-transparent">
-        <AppSidebar />
-        <Routes>
-          <Route index path="/" element={<Note />} />
-        </Routes>
+      <SidebarProvider className="flex flex-col h-screen">
+        <Titlebar />
+        <main className="flex grow h-full">
+          <AppSidebar />
+          <Routes>
+            <Route index path="/" element={<Note />} />
+          </Routes>
+        </main>
       </SidebarProvider>
     </BrowserRouter>
   </React.StrictMode>,

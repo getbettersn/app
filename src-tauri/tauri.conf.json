@@ -24,8 +24,7 @@
         "closable": true,
         "minimizable": true,
         "decorations": true,
-        "focus": false,
-        "transparent": true
+        "focus": false
       }
     ],
     "macOSPrivateApi": true,

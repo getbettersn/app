@@ -25,12 +25,6 @@ pub fn run() {
         .plugin(tauri_plugin_positioner::init())
         .setup(|app| {
 
-            // Manage state
-            app.manage(Mutex::new(AppState::default()));
-
-            // TODO: Implement later
-            // app.listen("quitProgram", |_event| std::process::exit(0));
-
             let _tray = TrayIconBuilder::new()
                 .icon(app.default_window_icon().unwrap().clone())
                 .build(app)?;
@@ -42,7 +36,7 @@ pub fn run() {
                 &window,
                 NSVisualEffectMaterial::Menu,
                 Some(NSVisualEffectState::Active),
-                Some(12.0),
+                Some(0.0),
             )
             .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
 

@@ -4,6 +4,8 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarHeader,
+  SidebarTrigger,
+  useSidebar
 } from "@/components/ui/sidebar";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
@@ -15,6 +17,16 @@ import { createNotesFolder, doesFolderExists, requestNotes } from "../lib/note";
 
 export function AppSidebar() {
   const [notes, setNotes] = useState<DirEntry[]>([]);
+
+  const {
+    state,
+    open,
+    setOpen,
+    openMobile,
+    setOpenMobile,
+    isMobile,
+    toggleSidebar,
+  } = useSidebar();
 
   // Load just only one time. That's why [] is empty.
   useEffect(() => {
@@ -31,17 +43,6 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="offcanvas" className="bg-transparent">
-      <SidebarHeader className="text-neutral-500 flex flex-row justify-end border-b">
-        <Button variant="ghost">
-          <FilePlus />
-        </Button>
-        <Button variant="ghost">
-          <Filter />
-        </Button>
-        <Button variant="ghost">
-          <Search />
-        </Button>
-      </SidebarHeader>
       <SidebarContent className="border-none bg-transparent">
         <SidebarGroup className="bg-transparent">
           {notes.map((note) => (
