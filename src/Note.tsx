@@ -29,7 +29,7 @@ export default function Note() {
   );
 
   return (
-    <main className="grow h-full select-none text-sm flex flex-col w-full border-neutral-600">
+    <main className="grow h-full select-none text-sm flex flex-col w-full">
       {
         textareaValue ? (
         <div className="grow flex flex-col bg-yellow-200 p-5">
@@ -40,7 +40,7 @@ export default function Note() {
           ></textarea>
         </div>
         ) : (
-          <div className="grow h-full border flex flex-col justify-center items-center bg-neutral-100 p-5">
+          <div className="grow h-fullcar flex flex-col justify-center items-center bg-neutral-800 p-5">
             <div className="flex flex-col gap-1 justify-center items-center">
             <Button variant="link">Create new note (Cmd + N)</Button>
             <Button variant="link">Go to note (Cmd + O)</Button>

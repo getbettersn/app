@@ -18,16 +18,6 @@ import { createNotesFolder, doesFolderExists, requestNotes } from "../lib/note";
 export function AppSidebar() {
   const [notes, setNotes] = useState<DirEntry[]>([]);
 
-  const {
-    state,
-    open,
-    setOpen,
-    openMobile,
-    setOpenMobile,
-    isMobile,
-    toggleSidebar,
-  } = useSidebar();
-
   // Load just only one time. That's why [] is empty.
   useEffect(() => {
     doesFolderExists().then((response) => {
@@ -44,10 +34,16 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="offcanvas" className="bg-transparent">
       <SidebarContent className="border-none bg-transparent">
-        <SidebarGroup className="bg-transparent">
-          {notes.map((note) => (
-            <NoteLink note={note}></NoteLink>
-          ))}
+        <SidebarGroup className="bg-transparent h-full">
+          {notes.length > 0 ?
+            notes.map((note) => (
+              <NoteLink note={note}></NoteLink>
+            )) : (
+              <div className="h-full flex items-center justify-center">
+                <p className="text-xs text-neutral-400">No notes found.</p>
+              </div>
+            )
+          }
         </SidebarGroup>
         <SidebarGroup />
       </SidebarContent>

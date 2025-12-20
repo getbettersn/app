@@ -6,6 +6,7 @@ import {
   readDir,
   readFile,
   DirEntry,
+  remove,
 } from "@tauri-apps/plugin-fs";
 
 /**
@@ -37,6 +38,20 @@ export async function saveNote(
     );
   } catch (err: any) {
     console.error(err);
+  }
+}
+
+/**
+ * Removes a note from the default folder.
+ * @param note_name - The full note name "note.md"
+ */
+export async function removeNote(
+  note_name: string
+) {
+  try {
+    await remove(NOTES_FOLDER.name + "/" + note_name, {baseDir: BaseDirectory.AppLocalData})
+  } catch(err: any) {
+    console.error(err)
   }
 }
 

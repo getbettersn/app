@@ -15,9 +15,9 @@ import Titlebar from "./components/titlebar";
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
-      <SidebarProvider className="flex flex-col h-screen">
+      <SidebarProvider className="dark flex flex-col h-screen">
         <Titlebar />
-        <main className="flex grow h-full">
+        <main className="flex grow h-full dark:bg-neutral-800">
           <AppSidebar />
           <Routes>
             <Route index path="/" element={<Note />} />
