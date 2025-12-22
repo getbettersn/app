@@ -10,6 +10,15 @@ import {
 } from "@tauri-apps/plugin-fs";
 
 /**
+ * Representer a Folder object.
+ * @interface Folder
+ */
+export interface Folder {
+  name: string;
+  dir: string;
+}
+
+/**
  * Default 'notes' folder location.
  * @type Folder
  */
@@ -17,6 +26,12 @@ const NOTES_FOLDER: Folder = {
   name: "notes",
   dir: "notes",
 };
+const DEFAULT_NOTE_NAME = "Untitled";
+
+export interface Note {
+  note: DirEntry;
+}
+
 const encoder = new TextEncoder();
 
 /**
@@ -25,7 +40,7 @@ const encoder = new TextEncoder();
  * @param content The content to write inside the note.
  */
 export async function saveNote(
-  note_name: string | undefined = "Untitled",
+  note_name: string | undefined = DEFAULT_NOTE_NAME,
   content: string | undefined,
 ) {
   try {
@@ -45,36 +60,118 @@ export async function saveNote(
  * Removes a note from the default folder.
  * @param note_name - The full note name "note.md"
  */
-export async function removeNote(
-  note_name: string
-) {
+export async function removeNote(note_name: string) {
   try {
-    await remove(NOTES_FOLDER.name + "/" + note_name, {baseDir: BaseDirectory.AppLocalData})
-  } catch(err: any) {
-    console.error(err)
+    await remove(NOTES_FOLDER.name + "/" + note_name, {
+      baseDir: BaseDirectory.AppLocalData,
+    });
+  } catch (err: any) {
+    console.error(err);
   }
 }
 
 /**
- * Creates a new note with the `name` param provided only if there isn't another note with the same name..
+ * Creates a new note with the `name` param provided only if there isn't another note with the same name.
+ * If the name isn't provided, a new empty note will be created with the DEFAULT_NOTE_NAME.
  * @param name
  */
-export async function createNote(name: string) {
-  // Add file extension
-  name = name.trim() + ".md";
+export async function createNote(name?: string) {
+  // Comprobar si se ha aportado un nombre
 
-  // comprobar que el archivo no exista
-  if (!doesNoteExists(name)) {
-    try {
-      await writeFile(NOTES_FOLDER.name + "/" + name, encoder.encode(""), {
-        baseDir: BaseDirectory.AppLocalData,
-      });
-    } catch (err: any) {
-      console.error(err);
+  if (name) {
+    // Add file extension
+    name = name.trim() + ".md";
+
+    // comprobar que el archivo no exista
+    if (!doesNoteExists(name)) {
+      try {
+        await writeFile(NOTES_FOLDER.name + "/" + name, encoder.encode(""), {
+          baseDir: BaseDirectory.AppLocalData,
+        });
+      } catch (err: any) {
+        console.error(err);
+      }
+    } else {
+      // TODO: Un mensaje de error o algo.
     }
+  } else {
+    // Solicito primero las notas
+    requestNotes().then(async (notes) => {
+      if (notes) {
+        // Contamos el número de notas con 'Untitled'
+        let count = 0;
+
+        // Que tiene el formato Untitled + number
+        // Untitled 1
+        // Untitled 2
+        notes.map((note: DirEntry) => {
+          if (getNoteName(note) == DEFAULT_NOTE_NAME) count++;
+        });
+
+        if (count > 0) {
+          // Creamos nota con count
+          let nameOfNote = DEFAULT_NOTE_NAME + " " + count + ".md";
+          try {
+            await writeFile(
+              NOTES_FOLDER.name + "/" + nameOfNote,
+              encoder.encode(""),
+              {
+                baseDir: BaseDirectory.AppLocalData,
+              },
+            );
+          } catch (err: any) {
+            console.error(err);
+          }
+        } else {
+          let nameOfNote = DEFAULT_NOTE_NAME + ".md";
+          try {
+            await writeFile(
+              NOTES_FOLDER.name + "/" + nameOfNote,
+              encoder.encode(""),
+              {
+                baseDir: BaseDirectory.AppLocalData,
+              },
+            );
+          } catch (err: any) {
+            console.error(err);
+          }
+        }
+      } else {
+        // Simplemente creamos una nueva nota con el nombre 'Untitled'
+        let nameOfNote = DEFAULT_NOTE_NAME + ".md";
+        try {
+          await writeFile(
+            NOTES_FOLDER.name + "/" + nameOfNote,
+            encoder.encode(""),
+            {
+              baseDir: BaseDirectory.AppLocalData,
+            },
+          );
+        } catch (err: any) {
+          console.error(err);
+        }
+      }
+    });
   }
 }
 
+/**
+ * Returns the name of the note without the file extension.
+ * @param note
+ * @returns string
+ */
+function getNoteName(note: DirEntry): string {
+  // separamos la extension
+  let fileNameWithoutExtention = note.name.split(".")[0];
+  // ahora, separamos por un espacio y el primero tiene que ser 'Untitled'
+  return fileNameWithoutExtention.split(" ")[0];
+}
+
+/**
+ * Checks if there is an existing note with the same name.
+ * @param noteName
+ * @returns void
+ */
 function doesNoteExists(noteName: string): boolean {
   let doesItExist: boolean = false;
 
@@ -93,15 +190,6 @@ function doesNoteExists(noteName: string): boolean {
   });
 
   return doesItExist;
-}
-
-/**
- * Representer a Folder object.
- * @interface Folder
- */
-export interface Folder {
-  name: string;
-  dir: string;
 }
 
 /**
