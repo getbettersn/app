@@ -8,6 +8,7 @@ import {
   DirEntry,
   remove,
 } from "@tauri-apps/plugin-fs";
+import { n } from "node_modules/react-router/dist/development/index-react-server-client-rcoGPJhU.d.mts";
 
 /**
  * Representer a Folder object.
@@ -71,100 +72,105 @@ export async function removeNote(note_name: string) {
 }
 
 /**
+ * Returns the number of notes with DEFAULT_NOTE_NAME
+ * provided by the default note builder (Untitled, Untitled 1...)
+ * given a list of notes.
+ * @param notes DirEntry[]
+ * @returns number
+ */
+function getNumberOfNotesWithUntitled(notes: DirEntry[]): number {
+  let count = 0;
+  notes.map((note: DirEntry) => {
+    if (getFirstWordOfNote(note) == DEFAULT_NOTE_NAME) count++;
+  });
+  return count;
+}
+
+/**
+ * Creates a new default note with the DEFAULT_NOTE_NAME.
+ * @constant DEFAULT_NOTE_NAME
+ */
+async function createUntitledNote() {
+  let notes = await requestNotes();
+
+  if (notes) {
+    let nOfNotesWithUntitled = getNumberOfNotesWithUntitled(notes);
+
+    if (nOfNotesWithUntitled > 0) {
+      // Mientras exista una nota con el mismo nombre,
+      // vamos cambiando el valor de nOfNotesWithUntitled
+      console.log("Checking...");
+      let bool = await doesNoteExists(
+        DEFAULT_NOTE_NAME + " " + nOfNotesWithUntitled,
+      );
+
+      console.log(bool)
+      console.log(DEFAULT_NOTE_NAME + " " + nOfNotesWithUntitled)
+      while (bool) {
+        console.log("Notes exists");
+        nOfNotesWithUntitled++;
+      }
+
+      createNote(DEFAULT_NOTE_NAME + " " + nOfNotesWithUntitled);
+    } else {
+      let nameOfNote = DEFAULT_NOTE_NAME;
+      createNote(nameOfNote);
+    }
+  } else {
+    // Simplemente creamos una nueva nota con el nombre 'Untitled'
+    let nameOfNote = DEFAULT_NOTE_NAME;
+    createNote(nameOfNote);
+  }
+}
+
+/**
  * Creates a new note with the `name` param provided only if there isn't another note with the same name.
  * If the name isn't provided, a new empty note will be created with the DEFAULT_NOTE_NAME.
  * @param name
  */
 export async function createNote(name?: string) {
-  // Comprobar si se ha aportado un nombre
-
   if (name) {
-    // Add file extension
-    name = name.trim() + ".md";
-
-    // comprobar que el archivo no exista
-    if (!doesNoteExists(name)) {
-      try {
-        await writeFile(NOTES_FOLDER.name + "/" + name, encoder.encode(""), {
+    // TODO: Importante comprobar si existe un archiv con el mismo
+    // nombre.
+    // `writeFile` sobrescribirá el archivo si ya existe un archivo
+    // con el mismo nombre.
+    try {
+      await writeFile(
+        NOTES_FOLDER.name + "/" + name + ".md",
+        encoder.encode(""),
+        {
           baseDir: BaseDirectory.AppLocalData,
-        });
-      } catch (err: any) {
-        console.error(err);
-      }
-    } else {
-      // TODO: Un mensaje de error o algo.
+        },
+      );
+    } catch (err: any) {
+      console.error(err);
     }
   } else {
-    // Solicito primero las notas
-    requestNotes().then(async (notes) => {
-      if (notes) {
-        // Contamos el número de notas con 'Untitled'
-        let count = 0;
-
-        // Que tiene el formato Untitled + number
-        // Untitled 1
-        // Untitled 2
-        notes.map((note: DirEntry) => {
-          if (getNoteName(note) == DEFAULT_NOTE_NAME) count++;
-        });
-
-        if (count > 0) {
-          // Creamos nota con count
-          let nameOfNote = DEFAULT_NOTE_NAME + " " + count + ".md";
-          try {
-            await writeFile(
-              NOTES_FOLDER.name + "/" + nameOfNote,
-              encoder.encode(""),
-              {
-                baseDir: BaseDirectory.AppLocalData,
-              },
-            );
-          } catch (err: any) {
-            console.error(err);
-          }
-        } else {
-          let nameOfNote = DEFAULT_NOTE_NAME + ".md";
-          try {
-            await writeFile(
-              NOTES_FOLDER.name + "/" + nameOfNote,
-              encoder.encode(""),
-              {
-                baseDir: BaseDirectory.AppLocalData,
-              },
-            );
-          } catch (err: any) {
-            console.error(err);
-          }
-        }
-      } else {
-        // Simplemente creamos una nueva nota con el nombre 'Untitled'
-        let nameOfNote = DEFAULT_NOTE_NAME + ".md";
-        try {
-          await writeFile(
-            NOTES_FOLDER.name + "/" + nameOfNote,
-            encoder.encode(""),
-            {
-              baseDir: BaseDirectory.AppLocalData,
-            },
-          );
-        } catch (err: any) {
-          console.error(err);
-        }
-      }
-    });
+    createUntitledNote();
   }
 }
 
 /**
- * Returns the name of the note without the file extension.
+ * Returns the first String of the note name provided. Used by the createUntitledNote function.
+ * @example
+ * // Note name with spaces
+ * 'Todo List.md' --> 'Todo'
+ * // Note name without space
+ * 'CS-112.md' --> 'CS-112'
  * @param note
  * @returns string
  */
-function getNoteName(note: DirEntry): string {
-  // separamos la extension
-  let fileNameWithoutExtention = note.name.split(".")[0];
-  // ahora, separamos por un espacio y el primero tiene que ser 'Untitled'
+function getFirstWordOfNote(note: DirEntry): string {
+  let fileNameWithoutExtention = getNoteName(note);
   return fileNameWithoutExtention.split(" ")[0];
+}
+
+/**
+ * Returns the note name without the extension.
+ * @param note
+ */
+function getNoteName(note: DirEntry): string {
+  return note.name.split(".")[0];
 }
 
 /**
@@ -172,22 +178,27 @@ function getNoteName(note: DirEntry): string {
  * @param noteName
  * @returns void
  */
-function doesNoteExists(noteName: string): boolean {
+async function doesNoteExists(noteName: string): Promise<boolean> {
   let doesItExist: boolean = false;
 
-  requestNotes().then((notes) => {
-    if (notes.length > 0) {
-      notes.map((note) => {
-        if (note.name == noteName) {
-          doesItExist = true;
-        } else {
-          doesItExist = false;
-        }
-      });
-    } else {
-      doesItExist = false;
-    }
-  });
+  let notes = await requestNotes();
+
+  if (notes.length > 0) {
+    notes.map((note) => {
+      console.log("Comparing...")
+      if (getNoteName(note) == noteName) {
+        console.log(getNoteName(note))
+        console.log(noteName);
+
+        doesItExist = true;
+        return doesItExist;
+      } else {
+        doesItExist = false;
+      }
+    });
+  } else {
+    doesItExist = false;
+  }
 
   return doesItExist;
 }
